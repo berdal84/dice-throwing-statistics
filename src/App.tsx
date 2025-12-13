@@ -32,6 +32,7 @@ function App()
     const data = raw_data ? JSON.parse(raw_data) : null;
     if (!data) {
       console.warn("data cannot be found in sessionStorage")
+      return;
     }
     setHistory(data)
   }
