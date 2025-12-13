@@ -1,12 +1,13 @@
 import { useMemo, useState } from 'react'
 import './App.css'
 import Button from '@mui/material/Button';
-import { UndoRounded } from '@mui/icons-material';
+import { Undo } from '@mui/icons-material';
 import Container from '@mui/material/Container';
-import Stack from '@mui/material/Stack';
 import Plot from 'react-plotly.js';
+import { Box, Grid } from '@mui/material';
 
 const VALUES = [2,3,4,5,6,7,8,9,10,11,12]
+const THEORETICAL_PROBABILITIES = [1,2,3,4,5,6,5,4,3,2,1].map( v => (v / 36) )
 
 function App()
 {
@@ -17,70 +18,89 @@ function App()
     count.fill(0)
 
     history.forEach( (value) => count[value-VALUES[0]] += 1 ) // count each number
-    count.forEach( (_, i) => count[i] /= history.length ) // normalize
+    
+    if (history.length > 0) {
+      count.forEach( (_, i) => count[i] /= history.length ) // normalize
+    }
   
     console.log(count)
     return count
   }, [history])
 
   return <>
-    <Container>
-      <Stack direction="column">
-      <h1>Dice Throwing Statistics</h1>
-      <h2>Register a Dice Throw Result</h2>
-      <Stack direction="row" flexWrap="wrap" gap={0.5} height="3rem">
-        {VALUES.map(
-          value => (
-            <Button
-              key={`value_${value}`}
-              variant='contained'
-              onClick={() => setHistory([...history, value])}
-              >
-                {value}
+    <Container
+      maxWidth="sm"
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 0,
+        alignItems: "start"
+      }}>
+      <h1>Dice Roll Statistics</h1>
+      <h2>Register a new result</h2>
+      <p>Press a number to add a new dice roll result to the history.</p>
+      <Grid container spacing={1} columnSpacing={1}>
+        {VALUES.map((value, index) =>
+            <Grid key={index} size={2}>
+              <Button               
+                variant='contained'
+                onClick={() => setHistory([...history, value])}
+                >
+                  {value}
               </Button>
-           ))
+            </Grid>
+           )
         }
-      </Stack>
+      </Grid>
       
-      <Stack direction="row" flexWrap="wrap" gap={0.5} sx={{marginTop: 1}}>
-        <p>History: ...{history.slice(-10).join(", ") }</p>
+      <Box sx={{ display: 'flex', flexDirection: 'row-reverse', gap: 1, marginTop: 2}}>
         <Button
           variant='text'
           disabled={history.length === 0}
           onClick={() => setHistory(history.toSpliced(history.length-1, 1))}
           >
-          <UndoRounded></UndoRounded> UNDO
+          <Undo/> UNDO
         </Button>
-        
-      </Stack>
 
-      <h3>Live Statistics</h3>
+        <p>History: ...{history.slice(-10).join(", ") }</p> 
+      </Box>
+
+      <h2>Statistics</h2>
       <Plot
         data={[{
+          x: VALUES,
+          y: THEORETICAL_PROBABILITIES,
+          text: THEORETICAL_PROBABILITIES.map( x => `${Math.round(x*100)}%`),
+          type: 'bar',
+          marker: { color: '#d2d2d2ff' },
+          name: 'theoretical'
+        }, {
           x: VALUES,
           y: probabilities,
           text: probabilities.map( x => `${Math.round(x*100)}%`),
           type: 'bar',
           mode: 'lines+markers',
-          marker: { color: '#325ce7ff' }
+          marker: { color: '#3283e7ff' },
+          name: 'current game'
         }]}
         layout={{
-          title: { text: 'Simple Plot'},
+          title: { text: 'Dice Roll Result Probabilities'},
+          legend: {
+            x: 0
+          },
           autosize: true,
           xaxis: {
             title: {
-              text: "Dice Throw Result"
+              text: "Dice Roll Result"
             }
           },
           yaxis: {
-            range: history.length === 0 ? [0,1] : undefined,
             title: {
               text: "Probabilities"
             }
           }
         }}
       />
-      </Stack>
   </Container></>
 }
 
