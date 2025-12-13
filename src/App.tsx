@@ -131,7 +131,10 @@ function App()
             }}}
             config={{
               displayModeBar: false,
-              responsive: true
+              responsive: true,
+              editable: false,
+              scrollZoom: false,
+              staticPlot: true
             }}
         />
       </Box>
