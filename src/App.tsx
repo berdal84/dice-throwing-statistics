@@ -29,7 +29,7 @@ function App()
 
   return <>
     <Container
-      maxWidth="sm"
+      maxWidth="xs"
       sx={{
         display: 'flex',
         flexDirection: 'column',
@@ -39,9 +39,9 @@ function App()
       <h1>Dice Roll Statistics</h1>
       <h2>Register a new result</h2>
       <p>Press a number to add a new dice roll result to the history.</p>
-      <Grid container spacing={1} columnSpacing={1}>
+      <Grid container spacing={1} columns={4}>
         {VALUES.map((value, index) =>
-            <Grid key={index} size={2}>
+            <Grid key={index} size={1}>
               <Button               
                 variant='contained'
                 onClick={() => setHistory([...history, value])}
@@ -67,39 +67,56 @@ function App()
 
       <h2>Statistics</h2>
       <Plot
+        style={{ maxWidth: '100%', height: '75vh'}}
         data={[{
-          x: VALUES,
-          y: THEORETICAL_PROBABILITIES,
+          y: VALUES,
+          x: THEORETICAL_PROBABILITIES,
           text: THEORETICAL_PROBABILITIES.map( x => `${Math.round(x*100)}%`),
           type: 'bar',
           marker: { color: '#d2d2d2ff' },
-          name: 'theoretical'
+          name: 'theoretical',
+          visible: "legendonly",
+          orientation: "h",
         }, {
-          x: VALUES,
-          y: probabilities,
+          y: VALUES,
+          x: probabilities,
           text: probabilities.map( x => `${Math.round(x*100)}%`),
           type: 'bar',
           mode: 'lines+markers',
           marker: { color: '#3283e7ff' },
-          name: 'current game'
+          name: 'current game',
+          orientation: "h",
         }]}
-        layout={{
-          title: { text: 'Dice Roll Result Probabilities'},
+        layout={{          
           legend: {
-            x: 0
+            xanchor: "right",
+            bgcolor: "rgba(255,255,255,0.5)",
           },
           autosize: true,
-          xaxis: {
-            title: {
-              text: "Dice Roll Result"
-            }
+          margin: {
+            pad: 0,
+            //b: 0,
+            t: 0,
+            //l: 20,
+            r: 0
           },
           yaxis: {
             title: {
+              text: "Dice Roll Result"
+            },
+            tickvals: VALUES,
+            ticks: 'outside'
+          },
+          xaxis: {
+            title: {
               text: "Probabilities"
-            }
-          }
-        }}
+            },
+            linewidth: 1,
+            ticks: 'outside'            
+          }}}
+          config={{
+            displayModeBar: false
+          }}
       />
   </Container></>
 }
