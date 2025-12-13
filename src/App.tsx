@@ -180,7 +180,7 @@ function App()
       </Stack>
       
       <Stack direction="row" flexWrap="wrap" gap={0.5} sx={{marginTop: 1}}>
-        <p>History: ...{history.join(", ") }</p>
+        <p>History: ...{history.slice(-10).join(", ") }</p>
         <Button
           variant='text'
           disabled={history.length === 0}
