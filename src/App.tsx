@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import './App.css'
 import Button from '@mui/material/Button';
-import { CleanHands, ClearAllOutlined, DeleteForeverOutlined, HourglassEmpty, RemoveCircleOutline, ResetTvOutlined, Undo } from '@mui/icons-material';
+import {DeleteForeverOutlined, Undo } from '@mui/icons-material';
 import Container from '@mui/material/Container';
 import Plot from 'react-plotly.js';
 import { Box } from '@mui/material';
