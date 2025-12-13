@@ -4,7 +4,7 @@ import Button from '@mui/material/Button';
 import { Undo } from '@mui/icons-material';
 import Container from '@mui/material/Container';
 import Plot from 'react-plotly.js';
-import { Box, Grid } from '@mui/material';
+import { Box, Grid, Paper } from '@mui/material';
 
 const VALUES = [2,3,4,5,6,7,8,9,10,11,12]
 const THEORETICAL_PROBABILITIES = [1,2,3,4,5,6,5,4,3,2,1].map( v => (v / 36) )
@@ -28,30 +28,22 @@ function App()
   }, [history])
 
   return <>
-    <Container
-      maxWidth="xs"
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 0,
-        alignItems: "start"
-      }}>
+    <Container maxWidth="md" sx={{ width: '100vw', margin: 0 }}>
       <h1>Dice Roll Statistics</h1>
       <h2>Register a new result</h2>
       <p>Press a number to add a new dice roll result to the history.</p>
-      <Grid container spacing={1} columns={4}>
+      <Box sx={{ display: 'flex', gap: "2px", justifyContent: 'center', flexWrap: 'wrap' }}>
         {VALUES.map((value, index) =>
-            <Grid key={index} size={1}>
-              <Button               
+              <Button
+                key={index}               
                 variant='contained'
                 onClick={() => setHistory([...history, value])}
                 >
                   {value}
               </Button>
-            </Grid>
            )
         }
-      </Grid>
+      </Box>
       
       <Box sx={{ display: 'flex', flexDirection: 'row-reverse', gap: 1, marginTop: 2}}>
         <Button
@@ -66,8 +58,9 @@ function App()
       </Box>
 
       <h2>Statistics</h2>
+      <Box>
       <Plot
-        style={{ maxWidth: '100%', height: '75vh'}}
+        style={{ width: '100%', height: '100%'}}
         data={[{
           y: VALUES,
           x: THEORETICAL_PROBABILITIES,
@@ -92,7 +85,7 @@ function App()
             xanchor: "right",
             bgcolor: "rgba(255,255,255,0.5)",
           },
-          autosize: true,
+          //autosize: true,
           margin: {
             pad: 0,
             //b: 0,
@@ -115,9 +108,11 @@ function App()
             ticks: 'outside'            
           }}}
           config={{
-            displayModeBar: false
+            displayModeBar: false,
+            responsive: true
           }}
       />
+      </Box>
   </Container></>
 }
 
