@@ -95,38 +95,47 @@ function App() {
         onPageChange={setPage}
         title="DR.STATS"
       />
-      <Box sx={{ display: 'flex', flexDirection: 'column', marginTop: 10, alignItems: 'stretch' }}>
+      <Box 
+        sx={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          rowGap: 3,
+          alignItems: 'stretch' 
+      }}>
 
         <Box
           id={PAGE.KEYBOARD}
           sx={{
+            marginTop: 10,
             display: 'flex',
             flexDirection: 'column',
-            minHeight: '100vh',
+            rowGap: 2
           }}>
 
-          <h2>Keyboard</h2>
+          <Typography fontSize={22}>Keyboard</Typography>
 
-          <p>Press a number to add a new dice roll result to the history.</p>
-
-          <Grid container
-            rowSpacing={1}
-            gridColumn={2}
-            marginBottom={1}
+          <Box
+            sx={{
+              flexDirection: 'row',
+              display: 'flex',
+              justifyContent: 'center',
+              flexWrap: 'wrap',
+              gap: 1
+            }}
           >
             {VALUES.map((value, index) =>
-              <Grid size={4}>
-                <Button
-                  key={index}
-                  variant='contained'
-                  onClick={() => historyAppend(value)}
-                >
-                  {value}
-                </Button>
-              </Grid>
+              <Button
+                key={index}
+                variant='contained'
+                sx={{ width: THEORETICAL_PROBABILITIES[index-2] * 200 }}
+                onClick={() => historyAppend(value)}
+              >
+                {value}
+              </Button>
             )}
-          </Grid>
-          <Divider></Divider>
+            
+          </Box>
+          
           <Box sx={{ display: 'flex', justifyContent: 'stretch', alignItems: 'center' }}>
             <Typography sx={{ opacity: 0.5, flexGrow: 1 }}>History: ..{history.slice(-10).join(", ")}.</Typography>
 
@@ -142,14 +151,18 @@ function App() {
 
         </Box>
 
+        <Divider></Divider>
+
         <Box
           id={PAGE.STATS}
           sx={{
             display: 'flex',
             flexDirection: 'column',
-            minHeight: '100vh'
+            minHeight: '100vh',
+            rowGap: 2
           }}>
-            <h2>Statistics</h2>
+            <Typography fontSize={22}>Statistics</Typography>
+
             <Plot
               style={{ width: '90%', height: '100%' }}
               data={[{
@@ -207,6 +220,8 @@ function App() {
               }}
             />
         </Box>
+
+        <Divider></Divider>
 
         <Box
           id={PAGE.MORE}
