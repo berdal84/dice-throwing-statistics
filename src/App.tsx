@@ -4,7 +4,7 @@ import Button from '@mui/material/Button';
 import { DeleteForeverOutlined, Undo } from '@mui/icons-material';
 import Container from '@mui/material/Container';
 import Plot from 'react-plotly.js';
-import { Box, Divider, Grid, Typography } from '@mui/material';
+import { Box, Divider, Typography } from '@mui/material';
 import AppBarCustom from './AppBarCustom';
 
 const VALUES = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
@@ -16,12 +16,6 @@ const PAGE = {
   STATS:  "Statistics",
   MORE:   "More.."
 }
-
-const PAGES = [
-  PAGE.KEYBOARD,
-  PAGE.STATS,
-  PAGE.MORE
-]
 
 function App() {
   const [history, setHistory] = useState<number[]>([])
@@ -74,7 +68,7 @@ function App() {
     load()
   }, [])
 
-  const [page, setPage] = useState( PAGES[0] )
+  const [page, setPage] = useState(PAGE.KEYBOARD)
 
   useEffect( () => {
     const el = document.getElementById(page)
@@ -91,7 +85,7 @@ function App() {
   return <>
     <Container maxWidth="md">
       <AppBarCustom
-        pages={PAGES}
+        pages={[PAGE.KEYBOARD, PAGE.STATS, PAGE.MORE]}
         onPageChange={setPage}
         title="DR.STATS"
       />
