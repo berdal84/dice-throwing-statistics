@@ -95,7 +95,7 @@ function App() {
         sx={{ 
           display: 'flex', 
           flexDirection: 'column', 
-          rowGap: 3,
+          rowGap: 4,
           alignItems: 'stretch' 
       }}>
 
@@ -224,8 +224,7 @@ function App() {
           id={PAGE.SENSITIVE}
           sx={{
             display: 'flex',
-            flexDirection: 'column',
-            minHeight: '100vh'
+            flexDirection: 'column'
           }}>
           <Typography fontSize={22}>{PAGE.SENSITIVE}</Typography>
           <p>Be carefull, you can loose your data here.</p>
@@ -240,33 +239,34 @@ function App() {
           <p>If you pressed CLEAR HISTORY by mistake, simply refresh the page to restore the previous history. Once you press a number again, you will loose the backup.</p>
         </Box>
 
-      </Box>
+          <Divider></Divider>
 
-      <Box
-        id={PAGE.ABOUT}
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          minHeight: '100vh',
-          rowGap: 2
-        }}>
-        <Typography fontSize={22}>About this website</Typography>
-        
-        <Typography>Purpose</Typography>
-        <p>The goal of this website is to be able to track each dice roll during a 2 dice game, and
-          then visualize the probabilities related to that particular game, and also comparing it with the theoretical probabilities.
-        </p>
+        <Box
+          id={PAGE.ABOUT}
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            minHeight: '100vh',
+            rowGap: 2
+          }}>
+          <Typography fontSize={22}>About this website</Typography>
+          
+          <Typography>Purpose</Typography>
+          <p>The goal of this website is to be able to track each dice roll during a 2 dice game, and
+            then visualize the probabilities related to that particular game, and also comparing it with the theoretical probabilities.
+          </p>
 
-        <Typography>Bugs/Issues</Typography>
-        <p>When you find a bug or an issue with the website, please take some time to add a issue in the bug 
-          tracker <a href="https://github.com/berdal84/dice-throwing-statistics/issues">here</a></p>
+          <Typography>Bugs/Issues</Typography>
+          <p>When you find a bug or an issue with the website that would be very useful if you could take some time to describe
+            it <a href="https://github.com/berdal84/dice-throwing-statistics/issues">there</a>.</p>
 
-        <Typography>Updates on v0.1</Typography>
-        <ul>
-          <li>Add theoretical probabilities under each button (from one to 5 dots)</li>
-          <li>Add this page so users can keep track of changes</li>
-        </ul>
+          <Typography>Updates on v0.1</Typography>
+          <ul>
+            <li>Add theoretical probabilities under each button's label (as little dots)</li>
+            <li>Add "About this website" section</li>
+          </ul>
 
+        </Box>
       </Box>
     </Container>
     </>
