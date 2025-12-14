@@ -8,13 +8,14 @@ import { Box, Divider, Typography } from '@mui/material';
 import AppBarCustom from './AppBarCustom';
 
 const VALUES = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-
-const THEORETICAL_PROBABILITIES = [1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1].map(v => (v / 36))
+const THEORETICAL_COUNT = [1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1]
+const THEORETICAL_PROBABILITIES = THEORETICAL_COUNT.map(v => (v / 36))
 
 const PAGE = {
-  KEYBOARD: "Keyboard",
-  STATS:  "Statistics",
-  MORE:   "More.."
+  KEYBOARD:  "Keyboard",
+  STATS:     "Statistics",
+  SENSITIVE: "Sensitive Operations",
+  ABOUT:     "About"
 }
 
 function App() {
@@ -85,9 +86,10 @@ function App() {
   return <>
     <Container maxWidth="md">
       <AppBarCustom
-        pages={[PAGE.KEYBOARD, PAGE.STATS, PAGE.MORE]}
+        pages={[PAGE.KEYBOARD, PAGE.STATS, PAGE.SENSITIVE, PAGE.ABOUT]}
         onPageChange={setPage}
         title="DR.STATS"
+        version="v0.1"
       />
       <Box 
         sx={{ 
@@ -121,10 +123,11 @@ function App() {
               <Button
                 key={index}
                 variant='contained'
-                sx={{ width: THEORETICAL_PROBABILITIES[index-2] * 200 }}
                 onClick={() => historyAppend(value)}
+                sx={{ display: "flex", flexDirection: 'column', paddingY: 3, rowGap: 1.5}}
               >
-                {value}
+                <Typography lineHeight={0.1} fontSize={20}>{value}</Typography>
+                <Typography lineHeight={0.1}>{".".repeat( THEORETICAL_COUNT[index]) }</Typography>
               </Button>
             )}
             
@@ -218,13 +221,13 @@ function App() {
         <Divider></Divider>
 
         <Box
-          id={PAGE.MORE}
+          id={PAGE.SENSITIVE}
           sx={{
             display: 'flex',
             flexDirection: 'column',
             minHeight: '100vh'
           }}>
-          <h2>More..</h2>
+          <Typography fontSize={22}>{PAGE.SENSITIVE}</Typography>
           <p>Be carefull, you can loose your data here.</p>
           <Button
             variant='text'
@@ -236,6 +239,33 @@ function App() {
           </Button>
           <p>If you pressed CLEAR HISTORY by mistake, simply refresh the page to restore the previous history. Once you press a number again, you will loose the backup.</p>
         </Box>
+
+      </Box>
+
+      <Box
+        id={PAGE.ABOUT}
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          minHeight: '100vh',
+          rowGap: 2
+        }}>
+        <Typography fontSize={22}>About this website</Typography>
+        
+        <Typography>Purpose</Typography>
+        <p>The goal of this website is to be able to track each dice roll during a 2 dice game, and
+          then visualize the probabilities related to that particular game, and also comparing it with the theoretical probabilities.
+        </p>
+
+        <Typography>Bugs/Issues</Typography>
+        <p>When you find a bug or an issue with the website, please take some time to add a issue in the bug 
+          tracker <a href="https://github.com/berdal84/dice-throwing-statistics/issues">here</a></p>
+
+        <Typography>Updates on v0.1</Typography>
+        <ul>
+          <li>Add theoretical probabilities under each button (from one to 5 dots)</li>
+          <li>Add this page so users can keep track of changes</li>
+        </ul>
 
       </Box>
     </Container>

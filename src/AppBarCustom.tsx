@@ -13,10 +13,11 @@ import { useState, type MouseEventHandler} from 'react';
 type ResponsiveAppBarProps = {
   pages: string[],
   onPageChange: (page: string) => void,
-  title: string
+  title: string,
+  version: `v${number}.${number}`
 }
 
-function ResponsiveAppBar({ pages, onPageChange, title = "TITLE" } : ResponsiveAppBarProps )
+function ResponsiveAppBar({ pages, onPageChange, title = "TITLE", version = "v0.0" } : ResponsiveAppBarProps )
 {
   const [open, setOpen] = useState(false)
 
@@ -41,8 +42,6 @@ function ResponsiveAppBar({ pages, onPageChange, title = "TITLE" } : ResponsiveA
           <Typography
             variant="h5"
             noWrap
-            component="a"
-            href="#app-bar-with-responsive-menu"
             sx={{
               mr: 2,
               display: 'flex',
@@ -54,6 +53,20 @@ function ResponsiveAppBar({ pages, onPageChange, title = "TITLE" } : ResponsiveA
             }}
           >
             { title }
+            <Typography
+              noWrap
+              sx={{
+                fontSize: 12,
+                fontFamily: 'monospace',
+                fontWeight: 100,
+                letterSpacing: '.1rem',
+                color: 'inherit',
+                opacity: 0.5,
+                textDecoration: 'none',
+              }}
+            >
+              { version }
+            </Typography>
           </Typography>
         </Box>
 
