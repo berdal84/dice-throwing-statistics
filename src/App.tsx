@@ -349,13 +349,13 @@ function App() {
           <p>When you find a bug or an issue with the website that would be very useful if you could take some time to describe
             it <a href="https://github.com/berdal84/dice-throwing-statistics/issues">there</a>.</p>
 
-          <Typography>Updates on v0.3</Typography>
+          <Typography>Changes on v0.2</Typography>
           <ul>
             <li>Add Dice Count and Dice Sides</li>
             <li>Add Game section</li>
           </ul>
 
-          <Typography>Updates on v0.1</Typography>
+          <Typography>Changes on v0.1</Typography>
           <ul>
             <li>Add theoretical probabilities under each button's label (as little dots)</li>
             <li>Add "About this website" section</li>
