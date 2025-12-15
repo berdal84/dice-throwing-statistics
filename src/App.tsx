@@ -1,39 +1,85 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import './App.css'
 import Button from '@mui/material/Button';
-import { DeleteForeverOutlined, Undo } from '@mui/icons-material';
+import { ReplayOutlined, Undo } from '@mui/icons-material';
 import Container from '@mui/material/Container';
 import Plot from 'react-plotly.js';
-import { Box, Divider, Typography } from '@mui/material';
+import { Box, ButtonGroup, Divider, FormLabel, Grid, Typography } from '@mui/material';
 import AppBarCustom from './AppBarCustom';
+import * as package_json from '../package.json';
 
-const VALUES = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-const THEORETICAL_COUNT = [1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1]
-const THEORETICAL_PROBABILITIES = THEORETICAL_COUNT.map(v => (v / 36))
+interface DiceOptions {
+  count: number;
+  sides: number;
+}
+
+function computeAllCombinations(dice: DiceOptions): number[]
+{
+  let sums = new Array<number>();
+
+  for(let dice_idx = 0; dice_idx < dice.count; ++dice_idx)
+  {
+    // First dice, simply add each possible value of a dice
+    if (dice_idx == 0) {
+      for(let side = 1; side <= dice.sides; ++side)     
+        sums.push( side )
+      continue
+    }
+
+    // Next dice, must add by each possible value of a dice
+    const new_sums: number[] = [];
+
+    for(const sum of sums )
+      for(let side = 1; side <= dice.sides; ++side)     
+        new_sums.push( sum + side )
+
+    sums = new_sums
+  }
+
+  return sums
+}
+
+function computeProbabilities(values: number[], _unique_combinations: number[] ): number[]
+{
+  const result = new Array(_unique_combinations.length)
+  result.fill(0)
+
+  values.forEach((value) => result[value - _unique_combinations[0]] += 1) // count each number
+
+  if (values.length > 0) {
+    result.forEach((_, i) => result[i] /= values.length) // normalize
+  }
+
+  return result
+}
 
 const PAGE = {
-  KEYBOARD:  "Keyboard",
+  HOME:      "Home",
   STATS:     "Statistics",
-  SENSITIVE: "Sensitive Operations",
+  SETTINGS:  "Settings",
+  GAME:      "Game",
   ABOUT:     "About"
-}
+} as const
 
 function App() {
   const [history, setHistory] = useState<number[]>([])
+  const [diceOptions, setDiceOptions] = useState<DiceOptions>({ count: 2, sides: 6}) // todo, save this
 
-  const probabilities = useMemo(() => {
-    const count = new Array(VALUES.length)
-    count.fill(0)
+  const all_combinations = useMemo( () => {
+    return computeAllCombinations(diceOptions)
+  }, [diceOptions])
 
-    history.forEach((value) => count[value - VALUES[0]] += 1) // count each number
+  const unique_combinations = useMemo( () => {
+    return Array.from( new Set(all_combinations) )
+  }, [all_combinations])
 
-    if (history.length > 0) {
-      count.forEach((_, i) => count[i] /= history.length) // normalize
-    }
+  const expected_probabilities = useMemo( () => {
+    return computeProbabilities(all_combinations, unique_combinations)
+  }, [all_combinations, unique_combinations])
 
-    return count
-  }, [history])
-
+  const game_probabilities = useMemo(() => {
+    return computeProbabilities(history, unique_combinations)
+  }, [history, unique_combinations])
 
   const load = () => {
     const raw_data = sessionStorage.getItem('data');
@@ -69,7 +115,7 @@ function App() {
     load()
   }, [])
 
-  const [page, setPage] = useState(PAGE.KEYBOARD)
+  const [page, setPage] = useState<string>(PAGE.HOME)
 
   useEffect( () => {
     const el = document.getElementById(page)
@@ -86,29 +132,61 @@ function App() {
   return <>
     <Container maxWidth="md">
       <AppBarCustom
-        pages={[PAGE.KEYBOARD, PAGE.STATS, PAGE.SENSITIVE, PAGE.ABOUT]}
+        pages={[
+          PAGE.HOME,
+          PAGE.STATS,
+          PAGE.GAME,
+          PAGE.ABOUT
+        ]}
         onPageChange={setPage}
         title="DR.STATS"
-        version="v0.1"
+        version={package_json.version}
       />
       <Box 
         sx={{ 
           display: 'flex', 
           flexDirection: 'column', 
           rowGap: 4,
-          alignItems: 'stretch' 
+          alignItems: 'stretch',
+          paddingTop: 10
       }}>
-
         <Box
-          id={PAGE.KEYBOARD}
-          sx={{
-            marginTop: 10,
+          id={PAGE.HOME}
+          sx={{            
             display: 'flex',
             flexDirection: 'column',
             rowGap: 2
           }}>
-
-          <Typography fontSize={22}>Keyboard</Typography>
+          <Grid container gridColumn={2} rowGap={2}>
+            <Grid size={6} flexDirection="column" display="flex">
+              <FormLabel>Dice Count</FormLabel>
+              <ButtonGroup aria-label="Basic button group">
+                {["One", "Two", "Three"].map( (label, index) => (
+                  <Button
+                  variant={ diceOptions.count == index+1 ? 'contained' : 'outlined'}
+                  onClick={() => setDiceOptions({...diceOptions, count: index+1})}
+                  >
+                    {label}
+                  </Button>
+                ))
+                }
+              </ButtonGroup>
+            </Grid>
+            <Grid size={6} flexDirection="column" display="flex">
+              <FormLabel>Dice Sides</FormLabel>
+              <ButtonGroup aria-label="Basic button group">
+                {[6].map( (value) => (
+                  <Button
+                  disabled={true}
+                  variant={ diceOptions.sides == value ? 'contained' : 'outlined'}
+                  onClick={() => setDiceOptions({...diceOptions, sides: value })}
+                  >
+                    {value}
+                  </Button>
+                ))}
+              </ButtonGroup>
+            </Grid>
+          </Grid>
 
           <Box
             sx={{
@@ -119,7 +197,7 @@ function App() {
               gap: 1
             }}
           >
-            {VALUES.map((value, index) =>
+            {unique_combinations.map((value, index) =>
               <Button
                 key={index}
                 variant='contained'
@@ -127,7 +205,7 @@ function App() {
                 sx={{ display: "flex", flexDirection: 'column', paddingY: 3, rowGap: 1.5}}
               >
                 <Typography lineHeight={0.1} fontSize={20}>{value}</Typography>
-                <Typography lineHeight={0.1}>{".".repeat( THEORETICAL_COUNT[index]) }</Typography>
+                <Typography lineHeight={0.1}>{".".repeat( expected_probabilities[index] * all_combinations.length ) }</Typography>
               </Button>
             )}
             
@@ -155,26 +233,27 @@ function App() {
           sx={{
             display: 'flex',
             flexDirection: 'column',
-            minHeight: '100vh',
+            maxHeight: '100vh',
+            minHeight: '500px',
             rowGap: 2
           }}>
             <Typography fontSize={22}>Statistics</Typography>
 
             <Plot
-              style={{ width: '90%', height: '100%' }}
+              style={{ width: '90%' }}
               data={[{
-                y: VALUES,
-                x: THEORETICAL_PROBABILITIES,
-                text: THEORETICAL_PROBABILITIES.map(x => `${Math.round(x * 100)}%`),
+                y: unique_combinations,
+                x: expected_probabilities,
+                text: expected_probabilities.map(x => `${Math.round(x * 100)}%`),
                 type: 'bar',
                 marker: { color: '#d2d2d2ff' },
                 name: 'theoretical',
                 //visible: "legendonly",
                 orientation: "h",
               }, {
-                y: VALUES,
-                x: probabilities,
-                text: probabilities.map(x => `${Math.round(x * 100)}%`),
+                y: unique_combinations,
+                x: game_probabilities,
+                text: game_probabilities.map(x => `${Math.round(x * 100)}%`),
                 type: 'bar',
                 marker: { color: '#3283e7ff' },
                 name: 'current game',
@@ -197,7 +276,7 @@ function App() {
                   title: {
                     text: "Dice Roll Result"
                   },
-                  tickvals: VALUES,
+                  tickvals: unique_combinations,
                   ticks: 'outside'
                 },
                 xaxis: {
@@ -211,7 +290,6 @@ function App() {
               config={{
                 displayModeBar: false,
                 responsive: true,
-                editable: false,
                 scrollZoom: false,
                 staticPlot: true
               }}
@@ -221,25 +299,36 @@ function App() {
         <Divider></Divider>
 
         <Box
-          id={PAGE.SENSITIVE}
-          sx={{
-            display: 'flex',
-            flexDirection: 'column'
-          }}>
-          <Typography fontSize={22}>{PAGE.SENSITIVE}</Typography>
-          <p>Be carefull, you can loose your data here.</p>
-          <Button
-            variant='text'
-            color='warning'
-            disabled={history.length === 0}
-            onClick={() => historyClear()}
-          >
-            <DeleteForeverOutlined /> CLEAR HISTORY
-          </Button>
-          <p>If you pressed CLEAR HISTORY by mistake, simply refresh the page to restore the previous history. Once you press a number again, you will loose the backup.</p>
-        </Box>
+            id={PAGE.GAME}
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 2
+            }}>
+          <Typography fontSize={22}>{PAGE.GAME}</Typography>
 
-          <Divider></Divider>
+          <Box>
+            <Button
+              variant='contained'
+              color='error'
+              disabled={history.length === 0}
+              onClick={() => historyClear()}
+              sx={{ flex: '50px', gap: 1 }}
+            >
+              <ReplayOutlined/><Typography>RESET</Typography>
+            </Button>
+          </Box>
+          
+          <p>
+            By pressing the button above, you'll clear the dice roll history.
+            Once history has been cleared, pressing a number on the keyboard will start to record a new history.
+          </p>
+          <p>
+            In case you pressed the button by mistake, simply refresh the webpage to restore the previous history.
+          </p>
+        </Box>  
+
+        <Divider></Divider>
 
         <Box
           id={PAGE.ABOUT}
@@ -259,6 +348,12 @@ function App() {
           <Typography>Bugs/Issues</Typography>
           <p>When you find a bug or an issue with the website that would be very useful if you could take some time to describe
             it <a href="https://github.com/berdal84/dice-throwing-statistics/issues">there</a>.</p>
+
+          <Typography>Updates on v0.3</Typography>
+          <ul>
+            <li>Add Dice Count and Dice Sides</li>
+            <li>Add Game section</li>
+          </ul>
 
           <Typography>Updates on v0.1</Typography>
           <ul>

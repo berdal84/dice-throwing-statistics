@@ -11,13 +11,17 @@ import { CasinoSharp } from '@mui/icons-material';
 import { useState, type MouseEventHandler} from 'react';
 
 type ResponsiveAppBarProps = {
-  pages: string[],
-  onPageChange: (page: string) => void,
-  title: string,
-  version: `v${number}.${number}`
+  pages: string[];
+  onPageChange: (page: string) => void;
+  title: string;
+  version: string;
 }
 
-function ResponsiveAppBar({ pages, onPageChange, title = "TITLE", version = "v0.0" } : ResponsiveAppBarProps )
+function ResponsiveAppBar({
+  pages, onPageChange,
+  title = "TITLE",
+  version = "X.Y.Z"
+} : ResponsiveAppBarProps )
 {
   const [open, setOpen] = useState(false)
 
@@ -65,7 +69,7 @@ function ResponsiveAppBar({ pages, onPageChange, title = "TITLE", version = "v0.
                 textDecoration: 'none',
               }}
             >
-              { version }
+              v{ version }
             </Typography>
           </Typography>
         </Box>
