@@ -212,8 +212,7 @@ function App() {
           </Box>
           
           <Box sx={{ display: 'flex', justifyContent: 'stretch', alignItems: 'center' }}>
-            <Typography sx={{ opacity: 0.5, flexGrow: 1 }}>History: ..{history.slice(-10).join(", ")}.</Typography>
-
+            <Typography sx={{ opacity: 0.5, flexGrow: 1 }}>Dice roll count: {history.length} / History: ..{history.slice(-10).join(", ")}.</Typography>            
             <Button
               variant='text'
               disabled={history.length === 0}
@@ -238,25 +237,24 @@ function App() {
             rowGap: 2
           }}>
             <Typography fontSize={22}>Statistics</Typography>
-
             <Plot
               style={{ width: '90%' }}
               data={[{
                 y: unique_combinations,
                 x: expected_probabilities,
-                text: expected_probabilities.map(x => `${Math.round(x * 100)}%`),
-                type: 'bar',
-                marker: { color: '#d2d2d2ff' },
-                name: 'theoretical',
+                type: 'scatter',
+                line: { color: '#ff9e16ff', width: 4, shape:  'vhv' },
+                marker: { size: 10 },
+                name: 'Theory',
                 //visible: "legendonly",
                 orientation: "h",
               }, {
                 y: unique_combinations,
                 x: game_probabilities,
-                text: game_probabilities.map(x => `${Math.round(x * 100)}%`),
+                text: game_probabilities.map(x => `${Math.round(x * history.length)} roll(s)`),
                 type: 'bar',
                 marker: { color: '#3283e7ff' },
-                name: 'current game',
+                name: 'Game',
                 orientation: "h",
               }]}
               layout={{
@@ -277,6 +275,7 @@ function App() {
                     text: "Dice Roll Result"
                   },
                   tickvals: unique_combinations,
+                  linewidth: 1,
                   ticks: 'outside'
                 },
                 xaxis: {
@@ -290,8 +289,8 @@ function App() {
               config={{
                 displayModeBar: false,
                 responsive: true,
-                scrollZoom: false,
-                staticPlot: true
+                scrollZoom: false
+                //staticPlot: true
               }}
             />
         </Box>
